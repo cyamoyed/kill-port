@@ -57,6 +57,12 @@ jobs:
     - name: Build application
       run: |
         python package.py
+    - name: Rename binary (macOS)
+      if: matrix.os == 'macos-latest'
+      run: mv dist/kill-port dist/kill-port-macos
+    - name: Rename binary (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: mv dist/kill-port dist/kill-port-linux
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
