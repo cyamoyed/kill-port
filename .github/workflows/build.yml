@@ -14,7 +14,10 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
         python-version: ['3.9', '3.10', '3.11', '3.12']
-
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -26,10 +29,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run unit tests
+      shell: bash
       run: |
+        if [[ "${{ runner.os }}" == "Windows" ]]; then chcp 65001; fi
         python test_unit.py
     - name: Run cross-platform tests
+      shell: bash
       run: |
+        if [[ "${{ runner.os }}" == "Windows" ]]; then chcp 65001; fi
         python test_cross_platform.py
 
   build:
