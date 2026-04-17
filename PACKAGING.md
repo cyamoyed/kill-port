@@ -1,229 +1,229 @@
-# 包分发指南
+# Package Distribution Guide
 
-本指南详细介绍了 `kill-port` 项目的打包流程、版本控制策略和分发渠道方案。
+This guide provides detailed information about the packaging process, version control strategy, and distribution channel options for the `kill-port` project.
 
-## 1. 打包流程
+## 1. Packaging Process
 
-### 1.1 环境配置
+### 1.1 Environment Configuration
 
-在开始打包之前，确保您的系统满足以下要求：
+Before starting the packaging process, ensure your system meets the following requirements:
 
-- **Python**：版本 3.7 或更高
-- **pip**：最新版本
-- **操作系统**：
-  - Windows：Windows 10 或更高版本
-  - macOS：macOS 10.14 或更高版本
-  - Linux：支持常见的发行版（Ubuntu、Debian、CentOS 等）
+- **Python**：Version 3.7 or higher
+- **pip**：Latest version
+- **Operating System**：
+  - Windows：Windows 10 or higher
+  - macOS：macOS 10.14 or higher
+  - Linux：Supports common distributions (Ubuntu, Debian, CentOS, etc.)
 
-### 1.2 依赖安装
+### 1.2 Dependency Installation
 
-1. 克隆仓库：
+1. Clone the repository：
    ```bash
    git clone https://github.com/cyamoyed/kill-port.git
    cd kill-port
    ```
 
-2. 安装基础依赖：
+2. Install basic dependencies：
    ```bash
    pip install -r requirements.txt
    ```
 
-3. 或者使用打包脚本自动安装依赖：
+3. Or use the packaging script to automatically install dependencies：
    ```bash
    python package.py --install-deps
    ```
 
-### 1.3 打包命令
+### 1.3 Packaging Commands
 
-#### Windows 平台
+#### Windows Platform
 
 ```bash
-# 生成 EXE 可执行文件
+# Generate EXE executable file
 python package.py --platform windows
 
-# 或者使用 PyInstaller 直接打包
+# Or use PyInstaller directly
 pyinstaller --name kill-port --windowed --onefile main.py
 ```
 
-生成的可执行文件位于 `dist/kill-port.exe`。
+The generated executable file is located at `dist/kill-port.exe`.
 
-#### macOS 平台
+#### macOS Platform
 
 ```bash
-# 生成可执行文件
+# Generate executable file
 python package.py --platform macos
 
-# 或者使用 PyInstaller 直接打包
+# Or use PyInstaller directly
 pyinstaller --name kill-port --windowed --onefile main.py
 
-# 创建 DMG 文件（需要在 macOS 上执行）
-# 使用 create-dmg 工具
+# Create DMG file (needs to be executed on macOS)
+# Using create-dmg tool
 create-dmg --volname "kill-port" --window-pos 200 120 --window-size 600 300 \
           --app-drop-link 450 100 --icon "kill-port.app" 150 100 dist/kill-port.app
 ```
 
-生成的可执行文件位于 `dist/kill-port`，DMG 文件需要额外创建。
+The generated executable file is located at `dist/kill-port`, and the DMG file needs to be created separately.
 
-#### Linux 平台
+#### Linux Platform
 
 ```bash
-# 生成可执行文件
+# Generate executable file
 python package.py --platform linux
 
-# 或者使用 PyInstaller 直接打包
+# Or use PyInstaller directly
 pyinstaller --name kill-port --windowed --onefile main.py
 
-# 创建 AppImage 文件（需要在 Linux 上执行）
-# 使用 AppImageTool
+# Create AppImage file (needs to be executed on Linux)
+# Using AppImageTool
 appimagetool dist/kill-port kill-port.AppImage
 ```
 
-生成的可执行文件位于 `dist/kill-port`，AppImage 文件需要额外创建。
+The generated executable file is located at `dist/kill-port`, and the AppImage file needs to be created separately.
 
-### 1.4 清理构建文件
+### 1.4 Clean Build Files
 
 ```bash
 python package.py --clean
 
-# 或者手动清理
+# Or clean manually
 rm -rf build dist kill-port.spec
 ```
 
-## 2. 版本控制策略
+## 2. Version Control Strategy
 
-### 2.1 版本号命名规则
+### 2.1 Version Number Naming Rules
 
-本项目使用语义化版本控制（Semantic Versioning），版本号格式为：`X.Y.Z`
+This project uses Semantic Versioning, with version numbers in the format：`X.Y.Z`
 
-- **X**（主版本号）：当进行不兼容的 API 更改时递增
-- **Y**（次版本号）：当添加向后兼容的新功能时递增
-- **Z**（补丁版本号）：当进行向后兼容的 bug 修复时递增
+- **X** (Major version)：Increment when making incompatible API changes
+- **Y** (Minor version)：Increment when adding backward-compatible new features
+- **Z** (Patch version)：Increment when making backward-compatible bug fixes
 
-### 2.2 更新日志格式
+### 2.2 Changelog Format
 
-更新日志应包含以下内容：
+The changelog should include the following content：
 
 ```markdown
-# 版本号 (发布日期)
+# Version (Release Date)
 
-## 功能变更
-- 新功能 1
-- 新功能 2
+## Feature Changes
+- New feature 1
+- New feature 2
 
-## Bug 修复
-- 修复 bug 1
-- 修复 bug 2
+## Bug Fixes
+- Fix bug 1
+- Fix bug 2
 
-## 其他变更
-- 变更 1
-- 变更 2
+## Other Changes
+- Change 1
+- Change 2
 ```
 
-### 2.3 发布流程
+### 2.3 Release Process
 
-1. 更新代码并进行测试
-2. 更新版本号（在 `setup.py` 和相关文件中）
-3. 编写更新日志
-4. 提交代码并创建标签
+1. Update code and perform tests
+2. Update version numbers (in `setup.py` and related files)
+3. Write changelog
+4. Commit code and create tag
    ```bash
-   git tag -a vX.Y.Z -m "版本 X.Y.Z 发布"
+   git tag -a vX.Y.Z -m "Version X.Y.Z release"
    git push origin vX.Y.Z
    ```
-5. 执行打包流程，生成各平台的可执行文件
-6. 在 GitHub Releases 页面创建新的发布，上传打包好的文件
+5. Execute packaging process to generate executable files for each platform
+6. Create a new release on GitHub Releases page and upload the packaged files
 
-## 3. 多平台分发渠道方案
+## 3. Multi-platform Distribution Channel Options
 
 ### 3.1 GitHub Releases
 
-- **主要分发渠道**：所有版本的发布文件都应上传到 GitHub Releases
-- **文件命名规范**：
+- **Main distribution channel**：All release files should be uploaded to GitHub Releases
+- **File naming convention**：
   - Windows：`kill-port-vX.Y.Z-windows.exe`
   - macOS：`kill-port-vX.Y.Z-macos.dmg`
   - Linux：`kill-port-vX.Y.Z-linux.AppImage`
-- **发布说明**：应包含版本变更内容、安装说明和已知问题
+- **Release notes**：Should include version changes, installation instructions, and known issues
 
-### 3.2 软件仓库
+### 3.2 Software Repositories
 
 #### Windows
-- ** Chocolatey**：可以考虑将软件发布到 Chocolatey 包管理器
-- ** winget**：可以考虑将软件发布到 Windows 包管理器
+- ** Chocolatey**：Consider publishing the software to Chocolatey package manager
+- ** winget**：Consider publishing the software to Windows Package Manager
 
 #### macOS
-- ** Homebrew**：可以考虑创建 Homebrew 公式
+- ** Homebrew**：Consider creating a Homebrew formula
 
 #### Linux
-- ** DEB 包**：为 Debian/Ubuntu 系统创建 DEB 包
-- ** RPM 包**：为 Red Hat/CentOS 系统创建 RPM 包
-- ** AUR**：为 Arch Linux 创建 AUR 包
+- ** DEB package**：Create DEB packages for Debian/Ubuntu systems
+- ** RPM package**：Create RPM packages for Red Hat/CentOS systems
+- ** AUR**：Create AUR packages for Arch Linux
 
-### 3.3 官网下载
+### 3.3 Official Website Download
 
-如果项目有官方网站，可以在网站上提供下载链接，指向 GitHub Releases 页面或直接托管安装文件。
+If the project has an official website, download links can be provided on the website, pointing to the GitHub Releases page or directly hosting installation files.
 
-## 4. 包验证和签名指南
+## 4. Package Verification and Signing Guide
 
-### 4.1 代码签名
+### 4.1 Code Signing
 
-为了确保分发包的安全性和完整性，建议对可执行文件进行代码签名：
+To ensure the security and integrity of distributed packages, it is recommended to sign executable files：
 
 #### Windows
-- 使用 Microsoft 代码签名证书对 EXE 文件进行签名
-- 命令示例：
+- Sign EXE files using Microsoft code signing certificate
+- Command example：
   ```bash
   signtool sign /f certificate.pfx /p password /t http://timestamp.digicert.com kill-port.exe
   ```
 
 #### macOS
-- 使用 Apple Developer 证书对应用进行签名
-- 命令示例：
+- Sign applications using Apple Developer certificate
+- Command example：
   ```bash
   codesign --deep --force --verbose --sign "Developer ID Application: Your Name" kill-port.app
   ```
 
 #### Linux
-- 可以使用 GPG 对 AppImage 文件进行签名
-- 命令示例：
+- Can sign AppImage files using GPG
+- Command example：
   ```bash
   gpg --detach-sign --armor kill-port.AppImage
   ```
 
-### 4.2 哈希验证
+### 4.2 Hash Verification
 
-为每个发布的文件生成哈希值，以便用户验证文件的完整性：
+Generate hash values for each released file to allow users to verify file integrity：
 
 ```bash
-# 生成 SHA256 哈希值
+# Generate SHA256 hash
 sha256sum kill-port.exe > kill-port.exe.sha256
 
-# 生成 MD5 哈希值
+# Generate MD5 hash
 md5sum kill-port.exe > kill-port.exe.md5
 ```
 
-在发布说明中提供这些哈希值，用户可以通过以下命令验证：
+Provide these hash values in the release notes, and users can verify them with the following commands：
 
 ```bash
-# 验证 SHA256 哈希值
+# Verify SHA256 hash
 sha256sum -c kill-port.exe.sha256
 
-# 验证 MD5 哈希值
+# Verify MD5 hash
 md5sum -c kill-port.exe.md5
 ```
 
-### 4.3 安全建议
+### 4.3 Security Recommendations
 
-- 定期更新依赖，避免使用有安全漏洞的版本
-- 对所有用户输入进行验证，防止命令注入攻击
-- 确保打包过程在安全的环境中进行
-- 定期扫描代码中的安全漏洞
+- Regularly update dependencies to avoid using versions with security vulnerabilities
+- Validate all user input to prevent command injection attacks
+- Ensure the packaging process is performed in a secure environment
+- Regularly scan code for security vulnerabilities
 
-## 5. 自动化构建
+## 5. Automated Building
 
-为了简化发布流程，建议设置自动化构建：
+To simplify the release process, it is recommended to set up automated builds：
 
 ### 5.1 GitHub Actions
 
-创建 `.github/workflows/build.yml` 文件，配置 CI/CD 流程：
+Create a `.github/workflows/build.yml` file to configure CI/CD workflow：
 
 ```yaml
 name: Build and Release
@@ -276,39 +276,39 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### 5.2 持续集成和持续部署
+### 5.2 Continuous Integration and Continuous Deployment
 
-- **持续集成**：每次代码提交时运行测试，确保代码质量
-- **持续部署**：当代码推送到主分支或创建标签时，自动构建和发布
+- **Continuous Integration**：Run tests on each code commit to ensure code quality
+- **Continuous Deployment**：Automatically build and release when code is pushed to main branch or tags are created
 
-## 6. 故障排除
+## 6. Troubleshooting
 
-### 6.1 打包失败
+### 6.1 Packaging Failure
 
-- **依赖问题**：确保所有依赖都已正确安装
-- **权限问题**：确保有足够的权限执行打包操作
-- **环境问题**：确保在正确的环境中执行打包，例如在 macOS 上打包 macOS 版本
+- **Dependency issues**：Ensure all dependencies are correctly installed
+- **Permission issues**：Ensure sufficient permissions to perform packaging operations
+- **Environment issues**：Ensure packaging is executed in the correct environment, e.g., packaging macOS version on macOS
 
-### 6.2 签名失败
+### 6.2 Signing Failure
 
-- **证书问题**：确保证书有效且未过期
-- **权限问题**：确保有足够的权限使用证书
-- **网络问题**：确保可以访问时间戳服务器
+- **Certificate issues**：Ensure certificates are valid and not expired
+- **Permission issues**：Ensure sufficient permissions to use certificates
+- **Network issues**：Ensure access to timestamp servers
 
-### 6.3 分发问题
+### 6.3 Distribution Issues
 
-- **文件大小**：优化打包配置，减小可执行文件大小
-- **兼容性**：确保在目标平台上进行测试
-- **下载速度**：考虑使用 CDN 加速下载
+- **File size**：Optimize packaging configuration to reduce executable file size
+- **Compatibility**：Ensure testing on target platforms
+- **Download speed**：Consider using CDN to accelerate downloads
 
-## 7. 最佳实践
+## 7. Best Practices
 
-- **保持打包过程简单**：使用脚本自动化打包流程
-- **测试打包结果**：在目标平台上测试打包后的可执行文件
-- **文档化流程**：确保所有团队成员都了解打包和分发流程
-- **定期更新**：及时更新依赖和修复安全漏洞
-- **用户反馈**：收集用户反馈，不断改进打包和分发流程
+- **Keep packaging process simple**：Use scripts to automate the packaging process
+- **Test packaging results**：Test packaged executables on target platforms
+- **Document processes**：Ensure all team members understand the packaging and distribution process
+- **Regular updates**：Promptly update dependencies and fix security vulnerabilities
+- **User feedback**：Collect user feedback to continuously improve packaging and distribution processes
 
-## 8. 结论
+## 8. Conclusion
 
-通过遵循本指南，您可以确保 `kill-port` 项目的打包和分发过程安全、可靠、高效。定期更新和优化打包流程，以适应不断变化的需求和技术环境。
+By following this guide, you can ensure the packaging and distribution process of the `kill-port` project is safe, reliable, and efficient. Regularly update and optimize the packaging process to adapt to changing requirements and technical environments.

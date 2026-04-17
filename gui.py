@@ -8,8 +8,8 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont
 
 class KillPortWorker(QThread):
-    """后台工作线程，用于执行端口杀死操作"""
-    finished = pyqtSignal(bool, str, str)  # 成功标志, 消息, PID
+    """Background worker thread for executing port killing operations"""
+    finished = pyqtSignal(bool, str, str)  # success flag, message, PID
     
     def __init__(self, port):
         super().__init__()
@@ -18,7 +18,7 @@ class KillPortWorker(QThread):
     def run(self):
         try:
             if not self.port or not self.port.isdigit():
-                self.finished.emit(False, "请输入有效的数字端口！", "")
+                self.finished.emit(False, "Please enter a valid numeric port!", "")
                 return
             
             port = self.port
@@ -31,7 +31,7 @@ class KillPortWorker(QThread):
                 )
                 
                 if not result.strip():
-                    self.finished.emit(False, f"端口 {port} 未被任何进程占用", "")
+                    self.finished.emit(False, f"Port {port} is not occupied by any process", "")
                     return
                 
                 pid = result.strip().splitlines()[0].split()[-1]
@@ -44,130 +44,130 @@ class KillPortWorker(QThread):
                         shell=True, text=True, stderr=subprocess.STDOUT
                     )
                 except subprocess.CalledProcessError:
-                    self.finished.emit(False, f"端口 {port} 未被任何进程占用", "")
+                    self.finished.emit(False, f"Port {port} is not occupied by any process", "")
                     return
                 
                 if not result.strip():
-                    self.finished.emit(False, f"端口 {port} 未被任何进程占用", "")
+                    self.finished.emit(False, f"Port {port} is not occupied by any process", "")
                     return
                 
                 pid = result.strip().splitlines()[0]
                 subprocess.run(f'kill -9 {pid}', shell=True,
                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
-            self.finished.emit(True, f"端口 {port} 已成功释放", pid)
+            self.finished.emit(True, f"Port {port} has been successfully released", pid)
             
         except subprocess.CalledProcessError:
-            self.finished.emit(False, f"端口 {port} 未被占用", "")
+            self.finished.emit(False, f"Port {port} is not occupied", "")
         except PermissionError:
             if os.name == 'nt':
-                self.finished.emit(False, "需要管理员权限才能执行此操作", "")
+                self.finished.emit(False, "Administrator privileges are required to perform this operation", "")
             else:
-                self.finished.emit(False, "需要 root 权限才能执行此操作", "")
+                self.finished.emit(False, "Root privileges are required to perform this operation", "")
         except Exception as e:
-            self.finished.emit(False, f"错误：{str(e)}", "")
+            self.finished.emit(False, f"Error: {str(e)}", "")
 
 class KillPortGUI(QWidget):
-    """端口进程杀死工具的GUI界面"""
+    """GUI interface for Port Process Killer"""
     
     def __init__(self):
         super().__init__()
         self.initUI()
     
     def initUI(self):
-        # 设置窗口属性
-        self.setWindowTitle('端口进程杀死工具')
+        # Set window properties
+        self.setWindowTitle('Port Process Killer')
         self.setGeometry(100, 100, 400, 200)
         self.setMinimumSize(350, 180)
         
-        # 创建布局
+        # Create layout
         main_layout = QVBoxLayout()
         
-        # 创建标题
-        title_label = QLabel('端口进程杀死工具')
+        # Create title
+        title_label = QLabel('Port Process Killer')
         title_label.setFont(QFont('Arial', 14, QFont.Bold))
         title_label.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(title_label)
         
-        # 创建输入区域
+        # Create input area
         input_layout = QHBoxLayout()
-        port_label = QLabel('端口号:')
+        port_label = QLabel('Port:')
         port_label.setFont(QFont('Arial', 10))
         self.port_input = QLineEdit()
-        self.port_input.setPlaceholderText('请输入要关闭的端口号')
+        self.port_input.setPlaceholderText('Please enter the port number to close')
         self.port_input.setFont(QFont('Arial', 10))
         input_layout.addWidget(port_label)
         input_layout.addWidget(self.port_input)
         main_layout.addLayout(input_layout)
         
-        # 创建按钮区域
+        # Create button area
         button_layout = QHBoxLayout()
-        self.kill_button = QPushButton('杀死进程')
+        self.kill_button = QPushButton('Kill Process')
         self.kill_button.setFont(QFont('Arial', 10))
         self.kill_button.clicked.connect(self.kill_port)
-        self.exit_button = QPushButton('退出')
+        self.exit_button = QPushButton('Exit')
         self.exit_button.setFont(QFont('Arial', 10))
         self.exit_button.clicked.connect(self.close)
         button_layout.addWidget(self.kill_button)
         button_layout.addWidget(self.exit_button)
         main_layout.addLayout(button_layout)
         
-        # 创建进度条
+        # Create progress bar
         self.progress_bar = QProgressBar()
         self.progress_bar.setVisible(False)
         main_layout.addWidget(self.progress_bar)
         
-        # 创建状态栏
+        # Create status bar
         self.status_bar = QStatusBar()
-        self.status_bar.showMessage('就绪')
+        self.status_bar.showMessage('Ready')
         main_layout.addWidget(self.status_bar)
         
-        # 设置布局
+        # Set layout
         self.setLayout(main_layout)
         
-        # 设置窗口居中
+        # Center window
         self.center()
     
     def center(self):
-        """将窗口居中显示"""
+        """Center the window on screen"""
         qr = self.frameGeometry()
         cp = QApplication.desktop().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
     
     def kill_port(self):
-        """处理杀死端口进程的操作"""
+        """Handle port killing operation"""
         port = self.port_input.text().strip()
         if not port:
-            QMessageBox.warning(self, '警告', '请输入端口号')
+            QMessageBox.warning(self, 'Warning', 'Please enter a port number')
             return
         
-        # 显示进度条
+        # Show progress bar
         self.progress_bar.setVisible(True)
-        self.progress_bar.setRange(0, 0)  # 不确定进度
-        self.status_bar.showMessage('正在处理...')
+        self.progress_bar.setRange(0, 0)  # Indeterminate progress
+        self.status_bar.showMessage('Processing...')
         self.kill_button.setEnabled(False)
         
-        # 创建并启动工作线程
+        # Create and start worker thread
         self.worker = KillPortWorker(port)
         self.worker.finished.connect(self.on_kill_finished)
         self.worker.start()
     
     def on_kill_finished(self, success, message, pid):
-        """处理杀死操作完成的回调"""
-        # 隐藏进度条
+        """Handle callback when kill operation is completed"""
+        # Hide progress bar
         self.progress_bar.setVisible(False)
         self.kill_button.setEnabled(True)
         
         if success:
-            QMessageBox.information(self, '成功', f"{message}\n进程PID：{pid}")
-            self.status_bar.showMessage('操作成功')
+            QMessageBox.information(self, 'Success', f"{message}\nProcess PID: {pid}")
+            self.status_bar.showMessage('Operation successful')
         else:
-            QMessageBox.warning(self, '提示', message)
-            self.status_bar.showMessage('操作完成')
+            QMessageBox.warning(self, 'Info', message)
+            self.status_bar.showMessage('Operation completed')
 
 def show_gui():
-    """显示GUI界面"""
+    """Show GUI interface"""
     app = QApplication(sys.argv)
     gui = KillPortGUI()
     gui.show()

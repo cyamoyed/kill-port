@@ -1,190 +1,190 @@
-# 端口进程杀死工具 (kill-port)
+# Port Process Killer (kill-port)
 
-一个跨平台的端口进程杀死工具，用于快速查找并杀死占用指定端口的进程。支持 Windows、macOS 和 Linux 平台，提供 GUI 和命令行两种操作方式。
+A cross-platform port process killer tool used to quickly find and kill processes occupying specified ports. Supports Windows, macOS, and Linux platforms, providing both GUI and command-line operation modes.
 
-## 功能特性
+## Features
 
-- 🎯 **跨平台支持**：兼容 Windows、macOS 和 Linux 操作系统
-- 🖥️ **双界面模式**：提供图形用户界面(GUI)和命令行界面(CLI)
-- ⚡ **快速操作**：一键杀死占用指定端口的进程
-- 📋 **详细反馈**：显示操作结果和进程 PID
-- 🔒 **权限提示**：当需要管理员/root 权限时给出明确提示
-- 🛠️ **自动化打包**：支持生成各平台的可执行文件
+- 🎯 **Cross-platform support**：Compatible with Windows, macOS, and Linux operating systems
+- 🖥️ **Dual interface mode**：Provides both Graphical User Interface (GUI) and Command Line Interface (CLI)
+- ⚡ **Quick operation**：One-click to kill processes occupying specified ports
+- 📋 **Detailed feedback**：Displays operation results and process PID
+- 🔒 **Permission prompt**：Provides clear prompts when administrator/root privileges are required
+- 🛠️ **Automated packaging**：Supports generating executable files for each platform
 
-## 支持的平台
+## Supported Platforms
 
-- **Windows**：生成 EXE 可执行文件
-- **macOS**：生成 DMG 安装包
-- **Linux**：生成 AppImage 或 DEB 包
+- **Windows**：Generates EXE executable files
+- **macOS**：Generates DMG installation packages
+- **Linux**：Generates AppImage or DEB packages
 
-## 安装指南
+## Installation Guide
 
-### 方法一：使用预编译的可执行文件
+### Method 1: Using Pre-compiled Executable Files
 
-1. 前往 [GitHub Releases](https://github.com/cyamoyed/kill-port/releases) 页面下载对应平台的可执行文件
-2. 对于 Windows，下载 `kill-port.exe` 文件
-3. 对于 macOS，下载 `kill-port.dmg` 文件并安装
-4. 对于 Linux，下载 `kill-port.AppImage` 文件并赋予执行权限
+1. Go to the [GitHub Releases](https://github.com/cyamoyed/kill-port/releases) page to download the executable file for your platform
+2. For Windows, download the `kill-port.exe` file
+3. For macOS, download the `kill-port.dmg` file and install it
+4. For Linux, download the `kill-port.AppImage` file and give it executable permissions
 
-### 方法二：从源代码安装
+### Method 2: Installing from Source Code
 
-1. 克隆仓库：
+1. Clone the repository：
    ```bash
    git clone https://github.com/cyamoyed/kill-port.git
    cd kill-port
    ```
 
-2. 安装依赖：
+2. Install dependencies：
    ```bash
    pip install -r requirements.txt
    ```
 
-3. 安装包：
+3. Install the package：
    ```bash
    pip install .
    ```
 
-## 使用教程
+## Usage Guide
 
-### GUI 模式
+### GUI Mode
 
-1. **Windows**：双击 `kill-port.exe` 文件
-2. **macOS**：打开 `kill-port.app` 应用
-3. **Linux**：运行 `kill-port` 可执行文件
+1. **Windows**：Double-click the `kill-port.exe` file
+2. **macOS**：Open the `kill-port.app` application
+3. **Linux**：Run the `kill-port` executable file
 
-在弹出的窗口中：
-- 在输入框中输入要关闭的端口号
-- 点击「杀死进程」按钮
-- 查看操作结果和进程 PID
+In the popup window：
+- Enter the port number to close in the input box
+- Click the "Kill Process" button
+- View the operation result and process PID
 
-### 命令行模式
+### Command Line Mode
 
 ```bash
-# 基本用法
-kill-port <端口号>
+# Basic usage
+kill-port <port>
 
-# 显示版本信息
+# Show version information
 kill-port --version
 
-# 安静模式，只输出错误信息
-kill-port --quiet <端口号>
+# Quiet mode, only output error messages
+kill-port --quiet <port>
 
-# 显示帮助信息
+# Show help information
 kill-port --help
 ```
 
-#### 示例
+#### Examples
 
 ```bash
-# 杀死占用 8080 端口的进程
+# Kill process occupying port 8080
 kill-port 8080
 
-# 显示版本信息
+# Show version information
 kill-port --version
 
-# 安静模式杀死占用 3000 端口的进程
+# Quiet mode to kill process occupying port 3000
 kill-port --quiet 3000
 ```
 
-## 常见问题解答 (FAQ)
+## Frequently Asked Questions (FAQ)
 
-### Q: 执行时提示「需要管理员权限」怎么办？
-A: 在 Windows 上，右键点击可执行文件并选择「以管理员身份运行」；在 macOS/Linux 上，使用 `sudo` 命令运行。
+### Q: What should I do when prompted "Administrator privileges required"?
+A: On Windows, right-click the executable file and select "Run as administrator"；On macOS/Linux, run with the `sudo` command.
 
-### Q: 执行后提示「端口未被占用」，但我确定有进程在使用该端口？
-A: 可能是权限不足导致无法查看所有进程，请尝试以管理员/root 权限运行。
+### Q: After execution, it prompts "Port not occupied", but I'm sure there's a process using the port?
+A: It may be due to insufficient permissions to view all processes, please try running as administrator/root.
 
-### Q: 为什么在 macOS 上打包后需要创建 DMG 文件？
-A: DMG 是 macOS 上常用的应用分发格式，需要在 macOS 系统上使用专门的工具创建。
+### Q: Why do I need to create a DMG file after packaging on macOS?
+A: DMG is a common application distribution format on macOS, which needs to be created using specialized tools on macOS systems.
 
-### Q: 为什么在 Linux 上打包后需要创建 AppImage 文件？
-A: AppImage 是一种跨 Linux 发行版的应用打包格式，可以在不同的 Linux 系统上直接运行。
+### Q: Why do I need to create an AppImage file after packaging on Linux?
+A: AppImage is a cross-Linux distribution application packaging format that can run directly on different Linux systems.
 
-## 故障排除
+## Troubleshooting
 
-1. **无法找到端口占用信息**：
-   - 检查是否有足够的权限
-   - 确认端口号是否正确
-   - 尝试使用 `netstat` (Windows) 或 `lsof` (macOS/Linux) 手动查看端口占用情况
+1. **Unable to find port occupancy information**：
+   - Check if you have sufficient permissions
+   - Confirm the port number is correct
+   - Try using `netstat` (Windows) or `lsof` (macOS/Linux) to manually check port occupancy
 
-2. **打包失败**：
-   - 确保已安装所有依赖
-   - 检查 PyInstaller 是否正确安装
-   - 尝试清理构建文件后重新打包
+2. **Packaging failure**：
+   - Ensure all dependencies are installed
+   - Check if PyInstaller is correctly installed
+   - Try cleaning build files and repackaging
 
-3. **GUI 界面无法启动**：
-   - 检查 PyQt5 是否正确安装
-   - 尝试使用命令行模式作为替代
+3. **GUI interface fails to start**：
+   - Check if PyQt5 is correctly installed
+   - Try using command line mode as an alternative
 
-## 开发指南
+## Development Guide
 
-### 项目结构
+### Project Structure
 
 ```
 kill-port/
-├── main.py          # 主入口文件
-├── gui.py           # PyQt5 GUI 实现
-├── cli.py           # 命令行接口实现
-├── setup.py         # 包配置文件
-├── pyinstaller.spec # PyInstaller 配置文件
-├── package.py       # 打包脚本
-├── test_cross_platform.py # 跨平台测试
-├── README.md        # 项目文档
-└── requirements.txt # 依赖文件
+├── main.py          # Main entry file
+├── gui.py           # PyQt5 GUI implementation
+├── cli.py           # Command line interface implementation
+├── setup.py         # Package configuration file
+├── pyinstaller.spec # PyInstaller configuration file
+├── package.py       # Packaging script
+├── test_cross_platform.py # Cross-platform test
+├── README.md        # Project documentation
+└── requirements.txt # Dependencies file
 ```
 
-### 打包流程
+### Packaging Process
 
-1. 安装依赖：
+1. Install dependencies：
    ```bash
    python package.py --install-deps
    ```
 
-2. 打包当前平台：
+2. Package current platform：
    ```bash
    python package.py
    ```
 
-3. 清理构建文件：
+3. Clean build files：
    ```bash
    python package.py --clean
    ```
 
-### 测试
+### Testing
 
-运行跨平台兼容性测试：
+Run cross-platform compatibility test：
 ```bash
 python test_cross_platform.py
 ```
 
-## 版本控制策略
+## Version Control Strategy
 
-- 版本号格式：`X.Y.Z`
-  - X：主版本号，重大功能变更
-  - Y：次版本号，新功能添加
-  - Z：补丁版本号，bug 修复
+- Version number format：`X.Y.Z`
+  - X：Major version number, major feature changes
+  - Y：Minor version number, new feature additions
+  - Z：Patch version number, bug fixes
 
-- 更新日志格式：
-  - 版本号
-  - 发布日期
-  - 功能变更列表
-  - Bug 修复列表
+- Changelog format：
+  - Version number
+  - Release date
+  - Feature change list
+  - Bug fix list
 
-## 贡献指南
+## Contribution Guide
 
-欢迎提交 Issue 和 Pull Request！请确保：
+Welcome to submit Issues and Pull Requests! Please ensure：
 
-1. 代码符合项目风格
-2. 添加适当的测试
-3. 更新文档
-4. 提供清晰的提交信息
+1. Code follows project style
+2. Add appropriate tests
+3. Update documentation
+4. Provide clear commit messages
 
-## 许可证
+## License
 
-本项目使用 MIT 许可证，详见 [LICENSE](LICENSE) 文件。
+This project uses the MIT License, see the [LICENSE](LICENSE) file for details.
 
-## 联系方式
+## Contact
 
-- 作者：cyam
-- 邮箱：980713832@qq.com
-- 项目地址：https://github.com/cyamoyed/kill-port
+- Author：cyam
+- Email：980713832@qq.com
+- Project address：https://github.com/cyamoyed/kill-port

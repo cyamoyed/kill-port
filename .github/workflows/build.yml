@@ -14,7 +14,10 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
         python-version: ['3.9', '3.10', '3.11', '3.12']
-
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "utf-8"
+      
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -26,9 +29,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run unit tests
+      shell: bash
       run: |
         python test_unit.py
     - name: Run cross-platform tests
+      shell: bash
       run: |
         python test_cross_platform.py
 
@@ -53,7 +58,7 @@ jobs:
       run: |
         python package.py
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: kill-port-${{ matrix.os }}
         path: dist/
@@ -65,7 +70,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         path: artifacts
     - name: Create Release
