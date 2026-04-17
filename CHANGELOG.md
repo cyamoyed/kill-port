@@ -1,16 +1,16 @@
-# 变更日志
+# Changelog
 
 ## [1.0.0] - 2026-04-16
 
-### 新增
-- 初始版本发布
-- 实现端口进程杀死功能
-- 添加图形界面操作
-- 支持Windows平台
-- 提供清晰的操作反馈和错误提示
+### Added
+- Initial version release
+- Implemented port process killing functionality
+- Added graphical interface operation
+- Supported Windows platform
+- Provided clear operation feedback and error prompts
 
-### 修复
-- 无
+### Fixed
+- None
 
-### 变更
-- 无
+### Changed
+- None

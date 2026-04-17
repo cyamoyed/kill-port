@@ -1,111 +1,111 @@
 import sys
 
 def main():
-    """主入口函数"""
-    # 根据运行方式选择不同的接口
+    """Main entry function"""
+    # Choose different interface based on running mode
     if len(sys.argv) > 1:
-        # 命令行模式
+        # Command line mode
         from cli import main as cli_main
         cli_main()
     else:
-        # GUI模式
+        # GUI mode
         try:
-            # 优先使用PyQt5 GUI
+            # Prefer PyQt5 GUI
             from gui import show_gui
             show_gui()
         except ImportError:
-            # 回退到tkinter GUI
+            # Fall back to tkinter GUI
             import os
             import subprocess
             import tkinter as tk
             from tkinter import simpledialog, messagebox
 
-            # 仅在Windows上设置DPI感知
+            # Set DPI awareness only on Windows
             if os.name == 'nt':
                 import ctypes
                 ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
             def kill_port_process(port):
-                """根据端口杀死进程"""
+                """Kill process by port"""
                 if not port or not port.isdigit():
-                    messagebox.showerror("错误", "请输入有效的数字端口！")
+                    messagebox.showerror("Error", "Please enter a valid numeric port!")
                     return
 
                 try:
-                    # 根据操作系统选择不同的命令
+                    # Choose different command based on operating system
                     if os.name == 'nt':  # Windows
-                        # 查找占用端口的PID
+                        # Find PID occupying the port
                         result = subprocess.check_output(
                             f'netstat -ano | findstr ":{port}"',
                             shell=True, text=True, stderr=subprocess.STDOUT
                         )
 
                         if not result.strip():
-                            messagebox.showinfo("提示", f"端口 {port} 未被任何进程占用")
+                            messagebox.showinfo("Info", f"Port {port} is not occupied by any process")
                             return
 
-                        # 获取PID
+                        # Get PID
                         pid = result.strip().splitlines()[0].split()[-1]
 
-                        # 强制杀死进程
+                        # Force kill the process
                         subprocess.run(f'taskkill /F /PID {pid}', shell=True,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     else:  # Linux/macOS
-                        # 查找占用端口的PID
+                        # Find PID occupying the port
                         try:
                             result = subprocess.check_output(
                                 f'lsof -i:{port} -t',
                                 shell=True, text=True, stderr=subprocess.STDOUT
                             )
                         except subprocess.CalledProcessError:
-                            messagebox.showinfo("提示", f"端口 {port} 未被任何进程占用")
+                            messagebox.showinfo("Info", f"Port {port} is not occupied by any process")
                             return
 
                         if not result.strip():
-                            messagebox.showinfo("提示", f"端口 {port} 未被任何进程占用")
+                            messagebox.showinfo("Info", f"Port {port} is not occupied by any process")
                             return
 
-                        # 获取PID
+                        # Get PID
                         pid = result.strip().splitlines()[0]
 
-                        # 强制杀死进程
+                        # Force kill the process
                         subprocess.run(f'kill -9 {pid}', shell=True,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-                    # 根据平台显示适当的成功消息
+                    # Show appropriate success message based on platform
                     if os.name == 'nt':
-                        messagebox.showinfo("成功", f"已成功杀死端口 {port}\n进程PID：{pid}")
+                        messagebox.showinfo("Success", f"Successfully killed port {port}\nProcess PID: {pid}")
                     else:
-                        messagebox.showinfo("成功", f"端口 {port} 已成功释放\n进程PID：{pid}")
+                        messagebox.showinfo("Success", f"Port {port} has been successfully released\nProcess PID: {pid}")
 
                 except subprocess.CalledProcessError:
-                    messagebox.showinfo("提示", f"端口 {port} 未被占用")
+                    messagebox.showinfo("Info", f"Port {port} is not occupied")
                 except PermissionError:
                     if os.name == 'nt':
-                        messagebox.showerror("权限错误", "需要管理员权限才能执行此操作")
+                        messagebox.showerror("Permission Error", "Administrator privileges are required to perform this operation")
                     else:
-                        messagebox.showerror("权限错误", "需要 root 权限才能执行此操作")
+                        messagebox.showerror("Permission Error", "Root privileges are required to perform this operation")
                 except Exception as e:
-                    messagebox.showerror("失败", f"错误：{str(e)}")
+                    messagebox.showerror("Failure", f"Error: {str(e)}")
 
             def show_input_box():
-                """显示兼容的输入框"""
+                """Show compatible input box"""
                 root = tk.Tk()
-                root.withdraw()  # 隐藏主窗口
+                root.withdraw()  # Hide main window
                 
-                # 跨平台窗口置顶设置
+                # Cross-platform window topmost setting
                 if os.name == 'nt':  # Windows
                     root.attributes('-topmost', True)
                 else:  # Linux/macOS
-                    # 在Linux和macOS上也尝试设置窗口置顶
+                    # Also try to set window topmost on Linux and macOS
                     try:
                         root.attributes('-topmost', True)
                     except Exception:
                         pass
 
-                # 根据平台设置适当的对话框标题
-                title = "端口进程杀死工具"
-                prompt = "请输入要关闭的端口号："
+                # Set appropriate dialog title based on platform
+                title = "Port Process Killer"
+                prompt = "Please enter the port number to close:"
 
                 port = simpledialog.askstring(title, prompt)
                 if port:
