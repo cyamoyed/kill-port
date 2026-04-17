@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kill-port"
+version = "1.0.0"
+description = "端口进程杀死工具 - 用于快速查找并杀死占用指定端口的进程"
+readme = "README.md"
+authors = [
+  { name = "kill-port", email = "980713832@qq.com" }
+]
+license = { file = "LICENSE" }
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows",
+]
+requires-python = ">=3.7"
+dependencies = []
+
+[project.scripts]
+kill-port = "main:main"
