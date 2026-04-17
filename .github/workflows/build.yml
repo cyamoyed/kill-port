@@ -31,12 +31,10 @@ jobs:
     - name: Run unit tests
       shell: bash
       run: |
-        if [[ "${{ runner.os }}" == "Windows" ]]; then chcp 65001; fi
         python test_unit.py
     - name: Run cross-platform tests
       shell: bash
       run: |
-        if [[ "${{ runner.os }}" == "Windows" ]]; then chcp 65001; fi
         python test_cross_platform.py
 
   build:
