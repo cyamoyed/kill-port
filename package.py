@@ -50,26 +50,39 @@ def package_windows():
 
 
 def package_macos():
-    """Package macOS DMG file"""
-    print("Starting to package macOS DMG file...")
+    """Package macOS .app bundle"""
+    print("Starting to package macOS .app bundle...")
     try:
-        # Package using PyInstaller
+        # Use --onedir (default) instead of --onefile to create a proper .app bundle
+        # macOS requires .app bundles for double-click launching
+        # Using pyinstaller_optimized.spec which creates BUNDLE for macOS
         result = subprocess.run(
-            [sys.executable, "-m", "PyInstaller", "--name", "kill-port", 
-             "--windowed", "--onefile", "main.py"],
+            [sys.executable, "-m", "PyInstaller", "--name", "kill-port",
+             "--windowed", "--onedir", "main.py"],
             check=True, capture_output=True, text=True
         )
-        print("macOS executable file packaged successfully")
-        print(f"Executable file location: dist/kill-port")
-        
-        # DMG creation steps can be added here
-        # Since this needs to be executed on macOS, only a hint is provided here
-        print("Hint: Please use create-dmg tool on macOS to create DMG file")
-        print("Command example: create-dmg --volname 'kill-port' --window-pos 200 120 --window-size 600 300 ")
-        print("          --app-drop-link 450 100 --icon 'kill-port.app' 150 100 dist/kill-port.app")
+        print("macOS .app bundle packaged successfully")
+        print(f".app bundle location: dist/kill-port.app")
+
+        # Ensure the executable inside the .app bundle has +x permission
+        exec_path = os.path.join("dist", "kill-port.app", "Contents", "MacOS", "kill-port")
+        if os.path.exists(exec_path):
+            os.chmod(exec_path, 0o755)
+            print(f"Set executable permission on: {exec_path}")
+
+        # Zip the .app bundle using ditto to preserve macOS metadata (code sign, permissions, resource forks)
+        zip_name = "kill-port-macos.zip"
+        subprocess.run(
+            ["ditto", "-c", "-k", "--sequesterRsrc", "--keepParent",
+             os.path.join("dist", "kill-port.app"),
+             os.path.join("dist", zip_name)],
+            check=True, capture_output=True, text=True
+        )
+        print(f"Created distributable zip: dist/{zip_name}")
+        print("Users can download this zip, extract it, and double-click kill-port.app to launch")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"Failed to package macOS executable file: {e}")
+        print(f"Failed to package macOS .app bundle: {e}")
         print(f"Error output: {e.stderr}")
         return False
 
@@ -109,6 +122,11 @@ def clean_build():
         if os.path.exists(file_name):
             os.remove(file_name)
             print(f"File deleted: {file_name}")
+    for zip_name in ["kill-port-macos.zip"]:
+        zip_path = os.path.join("dist", zip_name)
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
+            print(f"File deleted: {zip_path}")
     print("Cleanup completed")
 
 
