@@ -66,8 +66,14 @@ jobs:
       with:
         name: kill-port-${{ matrix.os }}
         path: dist/kill-port-macos.zip
-    - name: Upload artifact (Windows/Linux)
-      if: matrix.os != 'macos-latest'
+    - name: Upload artifact (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: kill-port-${{ matrix.os }}
+        path: dist/kill-port-windows.zip
+    - name: Upload artifact (Linux)
+      if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v4
       with:
         name: kill-port-${{ matrix.os }}

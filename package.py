@@ -31,20 +31,33 @@ def install_dependencies():
 
 
 def package_windows():
-    """Package Windows EXE file"""
-    print("Starting to package Windows EXE file...")
+    """Package Windows executable (onedir mode for fast startup)"""
+    print("Starting to package Windows executable...")
     try:
-        # Package using PyInstaller
+        # Use --onedir mode: no temp extraction on every launch, starts instantly
         result = subprocess.run(
-            [sys.executable, "-m", "PyInstaller", "--name", "kill-port", 
-             "--windowed", "--onefile", "main.py"],
+            [sys.executable, "-m", "PyInstaller", "--name", "kill-port",
+             "--windowed", "--onedir", "--noconfirm", "main.py"],
             check=True, capture_output=True, text=True
         )
-        print("Windows EXE file packaged successfully")
-        print(f"Executable file location: dist/kill-port.exe")
+        print("Windows executable packaged successfully")
+        print(f"Executable location: dist/kill-port/kill-port.exe")
+
+        # Zip the output folder for distribution
+        import zipfile
+        zip_name = "kill-port-windows.zip"
+        zip_path = os.path.join("dist", zip_name)
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+            for root, dirs, files in os.walk(os.path.join("dist", "kill-port")):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, os.path.join("dist"))
+                    zf.write(file_path, arcname)
+        print(f"Created distributable zip: dist/{zip_name}")
+        print("Users can extract this zip and double-click kill-port.exe to launch")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"Failed to package Windows EXE file: {e}")
+        print(f"Failed to package Windows executable: {e}")
         print(f"Error output: {e.stderr}")
         return False
 
@@ -58,7 +71,7 @@ def package_macos():
         # Using pyinstaller_optimized.spec which creates BUNDLE for macOS
         result = subprocess.run(
             [sys.executable, "-m", "PyInstaller", "--name", "kill-port",
-             "--windowed", "--onedir", "main.py"],
+             "--windowed", "--onedir", "--noconfirm", "main.py"],
             check=True, capture_output=True, text=True
         )
         print("macOS .app bundle packaged successfully")
@@ -93,8 +106,8 @@ def package_linux():
     try:
         # Package using PyInstaller
         result = subprocess.run(
-            [sys.executable, "-m", "PyInstaller", "--name", "kill-port", 
-             "--windowed", "--onefile", "main.py"],
+            [sys.executable, "-m", "PyInstaller", "--name", "kill-port",
+             "--windowed", "--onefile", "--noconfirm", "main.py"],
             check=True, capture_output=True, text=True
         )
         print("Linux executable file packaged successfully")
@@ -122,7 +135,7 @@ def clean_build():
         if os.path.exists(file_name):
             os.remove(file_name)
             print(f"File deleted: {file_name}")
-    for zip_name in ["kill-port-macos.zip"]:
+    for zip_name in ["kill-port-macos.zip", "kill-port-windows.zip"]:
         zip_path = os.path.join("dist", zip_name)
         if os.path.exists(zip_path):
             os.remove(zip_path)
